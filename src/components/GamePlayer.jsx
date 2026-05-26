@@ -1,32 +1,48 @@
 import { motion, AnimatePresence } from "motion/react";
 import { X, Maximize2, RotateCcw } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export function GamePlayer({ game, onClose }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef(null);
+  const iframeRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      // Cleanup to prevent channel closure errors with extensions
+      if (iframeRef.current) {
+        try {
+          iframeRef.current.src = "about:blank";
+        } catch (e) {
+          // Ignore potential cross-origin cleanup errors
+        }
+      }
+    };
+  }, []);
 
   if (!game) return null;
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen();
+      containerRef.current?.requestFullscreen().catch(() => {});
       setIsFullscreen(true);
     } else {
-      document.exitFullscreen();
+      document.exitFullscreen().catch(() => {});
       setIsFullscreen(false);
     }
   };
 
   const handleReload = () => {
-    const iframe = document.getElementById('game-iframe');
-    if (iframe) iframe.src = game.iframeUrl;
+    if (iframeRef.current) {
+      iframeRef.current.src = game.iframeUrl;
+    }
   };
 
   return (
     <AnimatePresence>
       {game && (
         <motion.div
+          key={game.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -65,6 +81,7 @@ export function GamePlayer({ game, onClose }) {
 
           <div ref={containerRef} className="flex-1 bg-black relative">
             <iframe
+              ref={iframeRef}
               id="game-iframe"
               src={game.iframeUrl}
               className="w-full h-full border-0"
