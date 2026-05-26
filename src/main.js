@@ -1,3 +1,4 @@
+import './index.css';
 import gamesData from './games.json';
 
 const grid = document.getElementById('games-grid');
@@ -13,9 +14,13 @@ function renderGames(games) {
     const card = document.createElement('div');
     card.className = "group relative bg-slate-900 border border-slate-800 rounded-xl overflow-hidden cursor-pointer shadow-lg transition-all duration-300 hover:scale-[1.02]";
     card.innerHTML = `
-      <div class="aspect-video w-full overflow-hidden">
+      <div class="aspect-video w-full overflow-hidden relative">
         <img src="${game.thumbnailUrl}" alt="${game.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-        <div class="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/20 transition-colors"></div>
+        <div class="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 duration-300">
+           <div class="bg-indigo-600 p-3 rounded-full text-white shadow-xl transform scale-75 group-hover:scale-100 transition-transform">
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="lucide lucide-play"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+           </div>
+        </div>
       </div>
       <div class="p-4">
         <div class="flex items-center justify-between mb-1">
